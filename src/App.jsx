@@ -216,6 +216,25 @@ function catIcon(cat) { return CATEGORY_ICONS[cat] || "📎"; }
 function catColor(cat) { return CATEGORY_COLORS[cat] || CATEGORY_COLORS.Outros; }
 function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
 
+const PAYMENT_WORDS = [
+  "nubank", "inter", "itaú", "itau", "bradesco", "santander", "caixa", "banco do brasil", "bb",
+  "picpay", "c6", "c6 bank", "original", "next", "will bank", "mercado pago", "mercadopago",
+  "pagbank", "pagseguro", "neon", "banco pan", "sicoob", "sicredi", "safra", "digio", "credicard",
+];
+function looksLikePaymentWord(m) {
+  if (!m) return false;
+  const low = m.toLowerCase();
+  return PAYMENT_WORDS.some((b) => low === b || low.includes(b));
+}
+function cleanMerchant(str) {
+  if (!str) return str;
+  let words = str.trim().split(/\s+/).filter((w) => w && !/^\d+x$/i.test(w));
+  const connectors = ["na", "no", "em", "de", "com"];
+  while (words.length && connectors.includes(words[0].toLowerCase())) words.shift();
+  while (words.length && connectors.includes(words[words.length - 1].toLowerCase())) words.pop();
+  return words.join(" ").trim();
+}
+
 function parseMessage(text, cards, categoryRules, defaultCard) {
   const lower = text.toLowerCase();
   let amount = null;
@@ -248,7 +267,23 @@ function parseMessage(text, cards, categoryRules, defaultCard) {
 
   let merchant = null;
   const mm = lower.match(/\b(?:no|na|em)\s+([a-zà-ú0-9\s]+?)(?:\s+com|\s+no valor|\s+valor|\s+r\$|,|$)/);
-  if (mm) merchant = mm[1].trim().replace(/\s+/g, " ");
+  if (mm) merchant = cleanMerchant(mm[1]);
+
+  if (merchant) {
+    const lastToken = merchant.split(/\s+/).pop();
+    const isJustInstallment = /^\d+x$/i.test(lastToken);
+    const equalsCard = cardName && merchant.toLowerCase() === cardName.toLowerCase();
+    if (isJustInstallment || equalsCard || looksLikePaymentWord(merchant)) merchant = null;
+  }
+  if (!merchant) {
+    const leadMatch = text.match(/^([^\d,]+?)(?=\s*(?:\d|r\$|,|$))/i);
+    if (leadMatch) {
+      const stopWords = new Set(["compra", "comprei", "compro", "paguei", "pagamento", "gasto", "gastei", "gastando", "de", "no", "na", "em", "com", "cartão", "cartao", "ontem", "hoje"]);
+      const words = leadMatch[1].trim().split(/\s+/).filter((w) => w && !stopWords.has(w.toLowerCase()));
+      const leading = words.join(" ").trim();
+      if (leading) merchant = leading;
+    }
+  }
 
   let category = "Outros";
   const hay = (merchant || "") + " " + lower;
