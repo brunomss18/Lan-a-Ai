@@ -2,49 +2,209 @@ import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabaseClient";
 
 const DEFAULT_CATEGORY_RULES = [
+  // Supermercados e mercearias
   { keyword: "extra", category: "Alimentação" },
   { keyword: "carrefour", category: "Alimentação" },
   { keyword: "pão de açúcar", category: "Alimentação" },
-  { keyword: "mercado", category: "Alimentação" },
+  { keyword: "pao de acucar", category: "Alimentação" },
+  { keyword: "assai", category: "Alimentação" },
+  { keyword: "assaí", category: "Alimentação" },
+  { keyword: "atacadão", category: "Alimentação" },
+  { keyword: "atacadao", category: "Alimentação" },
+  { keyword: "big supermercado", category: "Alimentação" },
+  { keyword: "dia supermercado", category: "Alimentação" },
+  { keyword: "comper", category: "Alimentação" },
+  { keyword: "angeloni", category: "Alimentação" },
+  { keyword: "savegnago", category: "Alimentação" },
+  { keyword: "muffato", category: "Alimentação" },
+  { keyword: "condor supermercado", category: "Alimentação" },
+  { keyword: "bretas", category: "Alimentação" },
+  { keyword: "zaffari", category: "Alimentação" },
+  { keyword: "coop", category: "Alimentação" },
+  { keyword: "sonda supermercados", category: "Alimentação" },
+  { keyword: "bistek", category: "Alimentação" },
+  { keyword: "giassi", category: "Alimentação" },
+  { keyword: "imperatriz supermercado", category: "Alimentação" },
+  { keyword: "prezunic", category: "Alimentação" },
+  { keyword: "guanabara", category: "Alimentação" },
+  { keyword: "mundial supermercado", category: "Alimentação" },
+  { keyword: "hortifruti", category: "Alimentação" },
+  { keyword: "sacolão", category: "Alimentação" },
+  { keyword: "sacolao", category: "Alimentação" },
   { keyword: "supermercado", category: "Alimentação" },
-  { keyword: "ifood", category: "Alimentação" },
-  { keyword: "restaurante", category: "Alimentação" },
+  { keyword: "mercado", category: "Alimentação" },
+  { keyword: "mercadinho", category: "Alimentação" },
   { keyword: "padaria", category: "Alimentação" },
+  { keyword: "açougue", category: "Alimentação" },
+  { keyword: "acougue", category: "Alimentação" },
+  { keyword: "quitanda", category: "Alimentação" },
+  { keyword: "feira", category: "Alimentação" },
+  // Restaurantes e delivery
+  { keyword: "ifood", category: "Alimentação" },
+  { keyword: "rappi", category: "Alimentação" },
+  { keyword: "uber eats", category: "Alimentação" },
+  { keyword: "restaurante", category: "Alimentação" },
+  { keyword: "lanchonete", category: "Alimentação" },
+  { keyword: "mcdonald", category: "Alimentação" },
+  { keyword: "burger king", category: "Alimentação" },
+  { keyword: "habib's", category: "Alimentação" },
+  { keyword: "habibs", category: "Alimentação" },
+  { keyword: "subway", category: "Alimentação" },
+  { keyword: "domino's", category: "Alimentação" },
+  { keyword: "dominos", category: "Alimentação" },
+  { keyword: "pizza hut", category: "Alimentação" },
+  { keyword: "starbucks", category: "Alimentação" },
+  { keyword: "cafeteria", category: "Alimentação" },
+  { keyword: "padoca", category: "Alimentação" },
+  // Transporte
   { keyword: "posto", category: "Transporte" },
   { keyword: "shell", category: "Transporte" },
   { keyword: "ipiranga", category: "Transporte" },
+  { keyword: "petrobras", category: "Transporte" },
+  { keyword: "br mania", category: "Transporte" },
+  { keyword: "ale combustíveis", category: "Transporte" },
+  { keyword: "raízen", category: "Transporte" },
   { keyword: "uber", category: "Transporte" },
   { keyword: "99", category: "Transporte" },
+  { keyword: "indriver", category: "Transporte" },
+  { keyword: "cabify", category: "Transporte" },
   { keyword: "estacionamento", category: "Transporte" },
+  { keyword: "pedágio", category: "Transporte" },
+  { keyword: "pedagio", category: "Transporte" },
+  { keyword: "sem parar", category: "Transporte" },
+  { keyword: "metrô", category: "Transporte" },
+  { keyword: "metro", category: "Transporte" },
+  { keyword: "bilhete único", category: "Transporte" },
+  { keyword: "oficina mecânica", category: "Transporte" },
+  { keyword: "borracharia", category: "Transporte" },
+  // Saúde
   { keyword: "farmácia", category: "Saúde" },
   { keyword: "farmacia", category: "Saúde" },
   { keyword: "drogaria", category: "Saúde" },
+  { keyword: "droga raia", category: "Saúde" },
+  { keyword: "drogaraia", category: "Saúde" },
+  { keyword: "drogasil", category: "Saúde" },
+  { keyword: "pacheco", category: "Saúde" },
+  { keyword: "extrafarma", category: "Saúde" },
+  { keyword: "pague menos", category: "Saúde" },
+  { keyword: "farmácias são paulo", category: "Saúde" },
+  { keyword: "ultrafarma", category: "Saúde" },
+  { keyword: "panvel", category: "Saúde" },
+  { keyword: "nissei", category: "Saúde" },
+  { keyword: "venâncio", category: "Saúde" },
+  { keyword: "venancio", category: "Saúde" },
   { keyword: "academia", category: "Saúde" },
+  { keyword: "smartfit", category: "Saúde" },
+  { keyword: "smart fit", category: "Saúde" },
+  { keyword: "clínica", category: "Saúde" },
+  { keyword: "clinica", category: "Saúde" },
+  { keyword: "hospital", category: "Saúde" },
+  { keyword: "laboratório", category: "Saúde" },
+  { keyword: "laboratorio", category: "Saúde" },
+  { keyword: "dentista", category: "Saúde" },
+  { keyword: "plano de saúde", category: "Saúde" },
+  { keyword: "unimed", category: "Saúde" },
+  { keyword: "amil", category: "Saúde" },
+  { keyword: "hapvida", category: "Saúde" },
+  { keyword: "notredame", category: "Saúde" },
+  { keyword: "sulamerica saude", category: "Saúde" },
+  // Assinaturas
   { keyword: "netflix", category: "Assinaturas" },
   { keyword: "spotify", category: "Assinaturas" },
   { keyword: "amazon prime", category: "Assinaturas" },
+  { keyword: "disney+", category: "Assinaturas" },
+  { keyword: "disney plus", category: "Assinaturas" },
+  { keyword: "hbo max", category: "Assinaturas" },
+  { keyword: "max streaming", category: "Assinaturas" },
+  { keyword: "globoplay", category: "Assinaturas" },
+  { keyword: "deezer", category: "Assinaturas" },
+  { keyword: "youtube premium", category: "Assinaturas" },
+  { keyword: "game pass", category: "Assinaturas" },
+  { keyword: "playstation plus", category: "Assinaturas" },
+  { keyword: "apple music", category: "Assinaturas" },
+  { keyword: "apple tv", category: "Assinaturas" },
+  { keyword: "icloud", category: "Assinaturas" },
+  { keyword: "google one", category: "Assinaturas" },
+  // Compras / marketplaces
   { keyword: "amazon", category: "Compras" },
   { keyword: "shopee", category: "Compras" },
   { keyword: "shein", category: "Compras" },
+  { keyword: "aliexpress", category: "Compras" },
   { keyword: "mercado livre", category: "Compras" },
+  { keyword: "mercadolivre", category: "Compras" },
+  { keyword: "magazine luiza", category: "Compras" },
+  { keyword: "magalu", category: "Compras" },
+  { keyword: "americanas", category: "Compras" },
+  { keyword: "casas bahia", category: "Compras" },
+  { keyword: "ponto frio", category: "Compras" },
+  { keyword: "submarino", category: "Compras" },
+  { keyword: "netshoes", category: "Compras" },
+  { keyword: "centauro", category: "Compras" },
+  { keyword: "kabum", category: "Compras" },
+  { keyword: "fast shop", category: "Compras" },
+  { keyword: "renner", category: "Vestuário" },
+  { keyword: "c&a", category: "Vestuário" },
+  { keyword: "riachuelo", category: "Vestuário" },
+  { keyword: "zara", category: "Vestuário" },
+  { keyword: "marisa", category: "Vestuário" },
+  { keyword: "hering", category: "Vestuário" },
+  { keyword: "shopping", category: "Vestuário" },
+  { keyword: "sapataria", category: "Vestuário" },
+  // Moradia
   { keyword: "aluguel", category: "Moradia" },
   { keyword: "condomínio", category: "Moradia" },
   { keyword: "condominio", category: "Moradia" },
+  { keyword: "iptu", category: "Moradia" },
+  { keyword: "leroy merlin", category: "Moradia" },
+  { keyword: "telhanorte", category: "Moradia" },
+  { keyword: "c&c casa", category: "Moradia" },
+  { keyword: "tok&stok", category: "Moradia" },
+  // Contas
   { keyword: "luz", category: "Contas" },
   { keyword: "energia", category: "Contas" },
   { keyword: "sabesp", category: "Contas" },
   { keyword: "água", category: "Contas" },
+  { keyword: "agua", category: "Contas" },
   { keyword: "internet", category: "Contas" },
   { keyword: "celular", category: "Contas" },
+  { keyword: "cemig", category: "Contas" },
+  { keyword: "light", category: "Contas" },
+  { keyword: "enel", category: "Contas" },
+  { keyword: "cpfl", category: "Contas" },
+  { keyword: "copel", category: "Contas" },
+  { keyword: "comgás", category: "Contas" },
+  { keyword: "comgas", category: "Contas" },
+  { keyword: "vivo", category: "Contas" },
+  { keyword: "claro", category: "Contas" },
+  { keyword: "tim", category: "Contas" },
+  { keyword: "oi telecom", category: "Contas" },
+  { keyword: "sky", category: "Contas" },
+  // Educação
+  { keyword: "escola", category: "Educação" },
+  { keyword: "faculdade", category: "Educação" },
+  { keyword: "curso", category: "Educação" },
+  { keyword: "udemy", category: "Educação" },
+  { keyword: "alura", category: "Educação" },
+  { keyword: "mensalidade escolar", category: "Educação" },
+  // Pets
+  { keyword: "petz", category: "Pets" },
+  { keyword: "cobasi", category: "Pets" },
+  { keyword: "petlove", category: "Pets" },
+  { keyword: "pet shop", category: "Pets" },
+  { keyword: "petshop", category: "Pets" },
+  { keyword: "veterinário", category: "Pets" },
+  { keyword: "veterinario", category: "Pets" },
 ];
 
 const CATEGORY_COLORS = {
   Alimentação: "#E3B341", Transporte: "#5FAF9F", Saúde: "#E1685A", Assinaturas: "#9C8CD9",
-  Compras: "#D98E4A", Moradia: "#6FBF73", Contas: "#7FA6D9", Outros: "#8A8D97",
+  Compras: "#D98E4A", Moradia: "#6FBF73", Contas: "#7FA6D9", Vestuário: "#D97AB0",
+  Educação: "#7AC0D9", Pets: "#B08968", Outros: "#8A8D97",
 };
 const CATEGORY_ICONS = {
   Alimentação: "🍽️", Transporte: "🚗", Saúde: "💊", Assinaturas: "📱",
-  Compras: "🛍️", Moradia: "🏠", Contas: "💡", Outros: "📎",
+  Compras: "🛍️", Moradia: "🏠", Contas: "💡", Vestuário: "👕",
+  Educação: "📚", Pets: "🐾", Outros: "📎",
 };
 const MONTH_NAMES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
@@ -363,6 +523,19 @@ export default function App() {
     setInput("");
   }
 
+  async function maybeLearnRule(merchant, category) {
+    const key = (merchant || "").trim().toLowerCase();
+    if (!key || key.length < 3) return;
+    const alreadyKnown = categoryRules.some((r) => key.includes(r.keyword.toLowerCase()));
+    if (alreadyKnown) return;
+    const row = { user_id: user.id, keyword: key, category };
+    const { data, error } = await supabase.from("category_rules").insert(row).select();
+    if (!error && data) {
+      setCategoryRules((prev) => [data[0], ...prev]);
+      showToast(`"${merchant}" salvo em ${category} — próxima vez reconheço sozinho.`);
+    }
+  }
+
   async function handleSave() {
     if (!pending) return;
     if (pending.amount == null) { showToast("Confirme o valor antes de lançar."); return; }
@@ -383,12 +556,14 @@ export default function App() {
       if (error) { showToast("Erro ao salvar parcelas."); return; }
       setTransactions((prev) => [...data, ...prev]);
       showToast(`${n} parcelas lançadas.`);
+      maybeLearnRule(pending.merchant, pending.category);
     } else {
       const row = { user_id: uidVal, amount: pending.amount, card_id: pending.card_id, card_name: pending.card_name, merchant: pending.merchant, category: pending.category, date: pending.date, raw: pending.raw };
       const { data, error } = await supabase.from("transactions").insert(row).select();
       if (error) { showToast("Erro ao salvar lançamento."); return; }
       setTransactions((prev) => [data[0], ...prev]);
       showToast("Lançado.");
+      maybeLearnRule(pending.merchant, pending.category);
     }
     setPending(null);
     inputRef.current?.focus();
@@ -531,6 +706,7 @@ export default function App() {
           <button className={page === "recorrentes" ? "nav-item active" : "nav-item"} onClick={() => setPage("recorrentes")}>Recorrentes</button>
           <button className={page === "cartoes" ? "nav-item active" : "nav-item"} onClick={() => setPage("cartoes")}>Cartões</button>
           <button className={page === "categorias" ? "nav-item active" : "nav-item"} onClick={() => setPage("categorias")}>Categorias</button>
+          <button className={page === "ajuda" ? "nav-item active" : "nav-item"} onClick={() => setPage("ajuda")}>Como usar</button>
           <div className="sidebar-spacer" />
           <div className="sidebar-user">{userName}</div>
           <button className="nav-item logout" onClick={handleLogout}>Sair</button>
@@ -750,6 +926,57 @@ export default function App() {
               <RuleAddRow onAdd={addRule} />
             </div>
           )}
+          {page === "ajuda" && (
+            <div className="page help-page">
+              <div className="help-block">
+                <h3>Lançando um gasto</h3>
+                <p>Digite naturalmente na barra de mensagem. O app identifica sozinho o valor, o local, o cartão e a categoria.</p>
+                <div className="help-example">"Compra no Extra com cartão PDA no valor de R$ 55"</div>
+                <div className="help-example">"Uber ontem, R$ 23"</div>
+                <p>Se o app não reconhecer algo (cartão, categoria), ele mostra uma tela de confirmação pra você completar antes de salvar.</p>
+              </div>
+
+              <div className="help-block">
+                <h3>Parcelamento</h3>
+                <p>Use "Nx de RS Y" ou "R$ total em Nx" que o app divide automaticamente, uma parcela por mês.</p>
+                <div className="help-example">"Geladeira 5x de R$ 200"</div>
+                <div className="help-example">"R$ 900 em 3x na Amazon"</div>
+              </div>
+
+              <div className="help-block">
+                <h3>Corrigir o último lançamento pelo chat</h3>
+                <p>Sem precisar abrir a edição manual:</p>
+                <div className="help-example">"corrigir último lançamento pra R$ 65"</div>
+                <div className="help-example">"corrigir último lançamento categoria Transporte"</div>
+              </div>
+
+              <div className="help-block">
+                <h3>Recorrentes</h3>
+                <p>Aluguel, assinaturas, academia — cadastre uma vez na aba <strong>Recorrentes</strong> com o dia do mês. O app lança sozinho quando o dia chega, sem duplicar.</p>
+              </div>
+
+              <div className="help-block">
+                <h3>Cartões</h3>
+                <p>Cadastre cada cartão com o dia de fechamento e vencimento da fatura. Marque um como <strong>★ padrão</strong> — se você não citar cartão na mensagem, ele usa esse automaticamente. Defina um limite pra acompanhar quanto ainda está disponível na fatura atual.</p>
+              </div>
+
+              <div className="help-block">
+                <h3>Categorias e orçamento</h3>
+                <p>Cada categoria tem palavras-chave que a reconhecem automaticamente (ex: "extra", "ifood" → Alimentação). Adicione as suas na aba <strong>Categorias</strong>. Defina um limite mensal por categoria (ou uma meta geral na Visão Geral) pra ver quando estourar.</p>
+                <p>Toda vez que você confirma uma loja que o app ainda não conhecia, ele aprende sozinho — da próxima vez já reconhece a categoria certa automaticamente.</p>
+              </div>
+
+              <div className="help-block">
+                <h3>Editar, excluir e exportar</h3>
+                <p>Na aba <strong>Lançamentos</strong>: ✎ edita, × exclui (pede confirmação antes). O botão <strong>Exportar CSV</strong> baixa os lançamentos filtrados do mês pra planilha.</p>
+              </div>
+
+              <div className="help-block">
+                <h3>Navegando por mês</h3>
+                <p>As setas ‹ › no topo trocam o mês visualizado — categorias, cartões e total recalculam automaticamente.</p>
+              </div>
+            </div>
+          )}
         </main>
       </div>
       {toast && <div className="toast">{toast}</div>}
@@ -833,8 +1060,7 @@ function GlobalStyle() {
         --bg: #15161B; --surface: #1E2027; --surface-alt: #262933; --border: #34373F;
         --text: #EDEDEF; --text-soft: #9A9CA5; --accent: #E3B341; --accent2: #5FAF9F; --expense: #E1685A;
         font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text);
-        min-height: 100vh; position: relative;
-      }
+        min-height: 100vh; position: relative;      }
       .talao-root * { box-sizing: border-box; }
       .talao-loading { background: #15161B; }
 
@@ -971,6 +1197,12 @@ function GlobalStyle() {
       .add-row input, .add-row select { flex: 1; min-width: 110px; background: var(--surface-alt); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 12.5px; color: var(--text); font-family: inherit; }
 
       .toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #1a1a1a; padding: 9px 18px; border-radius: 20px; font-size: 12.5px; font-weight: 600; z-index: 20; }
+
+      .help-page { max-width: 620px; }
+      .help-block { margin-bottom: 26px; }
+      .help-block h3 { font-family: Georgia, serif; font-size: 16px; color: var(--accent); margin: 0 0 8px; }
+      .help-block p { font-size: 13px; line-height: 1.6; color: var(--text); margin: 0 0 8px; }
+      .help-example { font-family: 'Courier New', monospace; font-size: 12.5px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; margin-bottom: 6px; color: var(--accent2); }
 
       @media (max-width: 700px) {
         .app-shell { flex-direction: column; }
