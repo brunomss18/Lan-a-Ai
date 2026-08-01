@@ -146,8 +146,21 @@ function AuthGate({ onLoggedIn }) {
   const [info, setInfo] = useState("");
   const [busy, setBusy] = useState(false);
 
+  async function handleReset() {
+    setErr(""); setInfo("");
+    if (!email.trim()) { setErr("Digite seu e-mail para receber o link de redefinição."); return; }
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin,
+    });
+    setBusy(false);
+    if (error) { setErr(error.message); return; }
+    setInfo("Enviamos um link para redefinir sua senha. Confira seu e-mail (e o spam).");
+  }
+
   async function handleSubmit() {
     setErr(""); setInfo("");
+    if (mode === "reset") { handleReset(); return; }
     if (!email.trim() || !password) { setErr("Preencha e-mail e senha."); return; }
     setBusy(true);
     if (mode === "signup") {
@@ -181,11 +194,47 @@ function AuthGate({ onLoggedIn }) {
           <div className="auth-field"><label>Nome</label><input value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome" /></div>
         )}
         <div className="auth-field"><label>E-mail</label><input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" /></div>
-        <div className="auth-field"><label>Senha</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={(e) => e.key === "Enter" && handleSubmit()} /></div>
+        {mode !== "reset" && (
+          <div className="auth-field"><label>Senha</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={(e) => e.key === "Enter" && handleSubmit()} /></div>
+        )}
         {err && <div className="auth-err">{err}</div>}
         {info && <div className="auth-info">{info}</div>}
-        <button className="auth-submit" disabled={busy} onClick={handleSubmit}>{busy ? "Aguarde..." : mode === "login" ? "Entrar" : "Criar conta"}</button>
+        <button className="auth-submit" disabled={busy} onClick={handleSubmit}>{busy ? "Aguarde..." : mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link de redefinição"}</button>
+        {mode === "login" && (
+          <button className="auth-forgot" onClick={() => { setMode("reset"); setErr(""); setInfo(""); }}>Esqueci minha senha</button>
+        )}
+        {mode === "reset" && (
+          <button className="auth-forgot" onClick={() => { setMode("login"); setErr(""); setInfo(""); }}>Voltar para o login</button>
+        )}
         <div className="auth-note">Autenticação real via Supabase — só você acessa sua conta.</div>
+      </div>
+    </div>
+  );
+}
+
+function NewPasswordScreen({ onDone }) {
+  const [password, setPassword] = useState("");
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function handleSubmit() {
+    setErr("");
+    if (password.length < 6) { setErr("A senha precisa ter pelo menos 6 caracteres."); return; }
+    setBusy(true);
+    const { error } = await supabase.auth.updateUser({ password });
+    setBusy(false);
+    if (error) { setErr(error.message); return; }
+    onDone();
+  }
+
+  return (
+    <div className="auth-wrap">
+      <div className="auth-card">
+        <div className="auth-brand">Lança Aí</div>
+        <div className="auth-sub">Defina sua nova senha</div>
+        <div className="auth-field"><label>Nova senha</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={(e) => e.key === "Enter" && handleSubmit()} /></div>
+        {err && <div className="auth-err">{err}</div>}
+        <button className="auth-submit" disabled={busy} onClick={handleSubmit}>{busy ? "Aguarde..." : "Salvar nova senha"}</button>
       </div>
     </div>
   );
@@ -196,6 +245,7 @@ function AuthGate({ onLoggedIn }) {
 export default function App() {
   const [session, setSession] = useState(null);
   const [checkingSession, setCheckingSession] = useState(true);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [page, setPage] = useState("visao");
   const [cards, setCards] = useState([]);
   const [categoryRules, setCategoryRules] = useState([]);
@@ -220,7 +270,10 @@ export default function App() {
       setSession(data.session);
       setCheckingSession(false);
     });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
+    const { data: listener } = supabase.auth.onAuthStateChange((event, s) => {
+      setSession(s);
+      if (event === "PASSWORD_RECOVERY") setPasswordRecovery(true);
+    });
     return () => listener.subscription.unsubscribe();
   }, []);
 
@@ -460,6 +513,7 @@ export default function App() {
   const allCategoriesForBudget = Array.from(new Set([...Object.keys(CATEGORY_COLORS), ...Object.keys(byCategory)]));
 
   if (checkingSession) return <div className="talao-root talao-loading" />;
+  if (passwordRecovery) return <div className="talao-root"><GlobalStyle /><NewPasswordScreen onDone={() => setPasswordRecovery(false)} /></div>;
   if (!user) return <div className="talao-root"><GlobalStyle /><AuthGate onLoggedIn={() => {}} /></div>;
   if (!dataLoaded) return <div className="talao-root talao-loading" />;
 
@@ -799,6 +853,8 @@ function GlobalStyle() {
       .auth-info { color: var(--accent2); font-size: 12px; margin-bottom: 12px; }
       .auth-submit { width: 100%; background: var(--accent); color: #1a1a1a; border: none; border-radius: 8px; padding: 11px 0; font-weight: 700; font-size: 13.5px; cursor: pointer; }
       .auth-submit:disabled { opacity: 0.6; }
+      .auth-forgot { display: block; width: 100%; text-align: center; background: none; border: none; color: var(--accent2); font-size: 12px; margin-top: 10px; cursor: pointer; }
+      .auth-forgot:hover { text-decoration: underline; }
       .auth-note { font-size: 10.5px; color: var(--text-soft); margin-top: 14px; text-align: center; line-height: 1.4; }
 
       .app-shell { display: flex; min-height: 100vh; }
