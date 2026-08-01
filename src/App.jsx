@@ -341,33 +341,38 @@ function AuthGate({ onLoggedIn }) {
     }
   }
 
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    handleSubmit();
+  }
+
   return (
     <div className="auth-wrap">
-      <div className="auth-card">
+      <form className="auth-card" onSubmit={handleFormSubmit} autoComplete="on">
         <div className="auth-brand">Lança Aí</div>
         <div className="auth-sub">seu controle financeiro, lançado por mensagem</div>
         <div className="auth-tabs">
-          <button className={mode === "login" ? "auth-tab active" : "auth-tab"} onClick={() => { setMode("login"); setErr(""); setInfo(""); }}>Entrar</button>
-          <button className={mode === "signup" ? "auth-tab active" : "auth-tab"} onClick={() => { setMode("signup"); setErr(""); setInfo(""); }}>Criar conta</button>
+          <button type="button" className={mode === "login" ? "auth-tab active" : "auth-tab"} onClick={() => { setMode("login"); setErr(""); setInfo(""); }}>Entrar</button>
+          <button type="button" className={mode === "signup" ? "auth-tab active" : "auth-tab"} onClick={() => { setMode("signup"); setErr(""); setInfo(""); }}>Criar conta</button>
         </div>
         {mode === "signup" && (
-          <div className="auth-field"><label>Nome</label><input value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome" /></div>
+          <div className="auth-field"><label>Nome</label><input name="name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome" /></div>
         )}
-        <div className="auth-field"><label>E-mail</label><input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" /></div>
+        <div className="auth-field"><label>E-mail</label><input type="email" name="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" /></div>
         {mode !== "reset" && (
-          <div className="auth-field"><label>Senha</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={(e) => e.key === "Enter" && handleSubmit()} /></div>
+          <div className="auth-field"><label>Senha</label><input type="password" name="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" /></div>
         )}
         {err && <div className="auth-err">{err}</div>}
         {info && <div className="auth-info">{info}</div>}
-        <button className="auth-submit" disabled={busy} onClick={handleSubmit}>{busy ? "Aguarde..." : mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link de redefinição"}</button>
+        <button type="submit" className="auth-submit" disabled={busy}>{busy ? "Aguarde..." : mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link de redefinição"}</button>
         {mode === "login" && (
-          <button className="auth-forgot" onClick={() => { setMode("reset"); setErr(""); setInfo(""); }}>Esqueci minha senha</button>
+          <button type="button" className="auth-forgot" onClick={() => { setMode("reset"); setErr(""); setInfo(""); }}>Esqueci minha senha</button>
         )}
         {mode === "reset" && (
-          <button className="auth-forgot" onClick={() => { setMode("login"); setErr(""); setInfo(""); }}>Voltar para o login</button>
+          <button type="button" className="auth-forgot" onClick={() => { setMode("login"); setErr(""); setInfo(""); }}>Voltar para o login</button>
         )}
         <div className="auth-note">Autenticação real via Supabase — só você acessa sua conta.</div>
-      </div>
+      </form>
     </div>
   );
 }
@@ -389,13 +394,13 @@ function NewPasswordScreen({ onDone }) {
 
   return (
     <div className="auth-wrap">
-      <div className="auth-card">
+      <form className="auth-card" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div className="auth-brand">Lança Aí</div>
         <div className="auth-sub">Defina sua nova senha</div>
-        <div className="auth-field"><label>Nova senha</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={(e) => e.key === "Enter" && handleSubmit()} /></div>
+        <div className="auth-field"><label>Nova senha</label><input type="password" name="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" /></div>
         {err && <div className="auth-err">{err}</div>}
-        <button className="auth-submit" disabled={busy} onClick={handleSubmit}>{busy ? "Aguarde..." : "Salvar nova senha"}</button>
-      </div>
+        <button type="submit" className="auth-submit" disabled={busy}>{busy ? "Aguarde..." : "Salvar nova senha"}</button>
+      </form>
     </div>
   );
 }
